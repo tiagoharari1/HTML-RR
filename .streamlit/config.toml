@@ -1,0 +1,7 @@
+[theme]
+# Paleta corporativa RR AI
+primaryColor = "#8075FF"
+backgroundColor = "#6320EE"
+secondaryBackgroundColor = "#F8F0FB"
+textColor = "#211A1D"
+font = "sans serif"

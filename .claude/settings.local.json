@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/Scripts/python.exe -c ' *)",
+      "Bash(.venv/Scripts/python.exe)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -m pytest tests/ -x -q)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -m streamlit run app.py --server.headless=true --server.port 8765)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8765/)",
+      "Bash(curl -s http://localhost:8765/)",
+      "Bash(curl -s http://localhost:8765/_stcore/health)",
+      "Bash(powershell -NoProfile -Command 'Get-NetTCPConnection -LocalPort 8765 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }; '\\\\''done'\\\\''')",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -m pytest tests/ -v)",
+      "Bash(ls \"c:\\\\Users\\\\tiago.harari\\\\Desktop\\\\RR AI\\\\\")",
+      "Read(//c/Users/tiago.harari/Desktop/**)"
+    ]
+  }
+}

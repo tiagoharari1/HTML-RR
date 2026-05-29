@@ -1,0 +1,14 @@
+# Core
+streamlit
+pandas
+openpyxl
+pydantic
+
+# Visualization
+plotly
+
+# Excel export
+xlsxwriter
+
+# Dev / testing
+pytest

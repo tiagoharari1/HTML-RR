@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data sensible (no commitear inputs reales con datos de la empresa)
+data/uploads/
+data/exports/
+*.xlsx.tmp
+data/referencia/
+
+# Xlsx duplicados sueltos en la raíz (los oficiales viven en data/precargado/)
+/contable.xlsx
+/macro.xlsx
+/estacionalidad b2b asp.xlsx
+/estacionalidad orders b2b.xlsx
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
