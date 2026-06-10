@@ -39,3 +39,8 @@ data/referencia/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Outputs generados y archivos de datos de empresa
+output/
+/P&L Evolution.xlsx
+/Guia_Git_HTML-RR.docx

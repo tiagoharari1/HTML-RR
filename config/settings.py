@@ -276,6 +276,27 @@ COLS_NPV: list[str] = [
 COLS_BIMO: list[str] = ["dif_fx", "currency_hedge"]
 COLS_REVENUE_MARGIN: list[str] = ["up_front_incentives", "fees", "cancellations"]
 
+# Componentes del Operating Contribution (verificados contra actuals.csv Nivel 3)
+COLS_COST_OF_REVENUE: list[str] = [
+    "cost_of_installments",
+    "credit_card_processing",
+    "frauds",
+    "errors",
+    "customer_claims",
+    "customer_service",
+    "other_transactional_taxes",
+    "intercompany",
+    "dif_fx",
+]
+COLS_SALES_AND_MARKETING: list[str] = [
+    "affiliates",
+    "white_labels_api",
+]
+# OC = net_revenue + COLS_COST_OF_REVENUE + COLS_SALES_AND_MARKETING
+COLS_OPERATING_CONTRIBUTION: list[str] = (
+    COLS_NET_REVENUE + COLS_COST_OF_REVENUE + COLS_SALES_AND_MARKETING
+)
+
 
 # ---------------------------------------------------------------------------
 # Defaults

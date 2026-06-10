@@ -13,7 +13,20 @@
       "Bash(powershell -NoProfile -Command 'Get-NetTCPConnection -LocalPort 8765 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }; '\\\\''done'\\\\''')",
       "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -m pytest tests/ -v)",
       "Bash(ls \"c:\\\\Users\\\\tiago.harari\\\\Desktop\\\\RR AI\\\\\")",
-      "Read(//c/Users/tiago.harari/Desktop/**)"
+      "Read(//c/Users/tiago.harari/Desktop/**)",
+      "Bash(.venv/Scripts/python.exe -c \"import playwright; print\\('playwright OK'\\)\")",
+      "Bash(.venv/Scripts/python.exe -c \"import streamlit; print\\('streamlit', streamlit.__version__\\)\")",
+      "Bash(.venv/Scripts/python.exe -m pip install playwright -q)",
+      "Bash(.venv/Scripts/python.exe -m playwright install chromium)",
+      "Bash(.venv/Scripts/python.exe _shots.py)",
+      "Bash(.venv/Scripts/python.exe -c \"import pandas as pd; df=pd.read_excel\\('data/referencia/base 2026.xlsx', sheet_name=0\\); print\\('meses:', sorted\\(df['Mes RI'].dropna\\(\\).unique\\(\\).tolist\\(\\)\\)\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\tiago.harari\\\\Desktop\\\\RR AI\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import pandas as pd; df = pd.read_csv\\('output/actuals.csv', encoding='utf-8-sig', sep=None, engine='python'\\); print\\(df.columns.tolist\\(\\)\\); print\\(df.head\\(3\\).to_string\\(\\)\\)\")",
+      "Bash(.venv/Scripts/python.exe -)",
+      "Bash(git add *)"
     ]
   }
 }

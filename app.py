@@ -53,21 +53,19 @@ STEP_RENDERERS = [
 
 
 def _inject_styles() -> None:
-    """Estilos minimalistas globales (paleta neutra, stepper, botones).
+    """Estilos globales (paleta de marca Despegar, stepper, botones).
 
-    Paleta (post-inversión):
-      - Background main  #FAFAFA  (near-white — canvas)
-      - Background side  #FFFFFF  (blanco puro — sidebar)
-      - Text primary     #0A0A0A
-      - Text secondary   #6B7280
-      - Text muted       #9CA3AF
-      - Accent           #6320EE  (violeta — solo botón primario, paso activo, links, spinner)
-      - Accent soft      #8075FF  (lavanda — paso completado)
-      - Hairline         rgba(10,10,10,0.08)
-
-    El violeta deja de ser canvas y pasa a ser acento puntual. Los widgets
-    de Streamlit conservan su estilo default sobre superficie clara, por
-    lo que ya no hace falta forzar colores con `!important`.
+    Paleta "Despegar Blue" — fondos claros + azul de marca como acento:
+      - Background main  #F7F9FC  (tinte azulado casi-blanco — canvas)
+      - Background side  #FFFFFF  (blanco puro — sidebar / cards)
+      - Text primary     #0F172A  (slate-900, negro-navy cálido)
+      - Text secondary   #64748B
+      - Text muted       #94A3B8
+      - Brand / Accent   #2E5BFF  (azul Despegar — botón primario, paso activo, links, spinner)
+      - Brand hover      #1E40D6  (azul más profundo)
+      - Brand tint       rgba(46,91,255,0.08)  (fondo paso activo, hovers sutiles)
+      - Brand soft       #64748B  (gris medio — paso completado)
+      - Hairline         rgba(46,91,255,0.10)
     """
     st.markdown(
         """
@@ -82,11 +80,11 @@ def _inject_styles() -> None:
 
             /* ──────────────────────────────  Canvas principal  ─────────────────── */
             [data-testid="stMain"] {
-                background-color: #FAFAFA;
-                color: #0A0A0A;
+                background-color: #F7F9FC;
+                color: #0F172A;
             }
             [data-testid="stAppViewContainer"] {
-                background-color: #FAFAFA;
+                background-color: #F7F9FC;
             }
             /* Max-width centrado para que el contenido no se desparrame en monitores grandes */
             [data-testid="stMain"] .block-container {
@@ -102,7 +100,7 @@ def _inject_styles() -> None:
             .rrai-header__title {
                 font-size: 36px;
                 font-weight: 700;
-                color: #0A0A0A;
+                color: #0F172A;
                 margin: 0 0 0.65rem 0;
                 letter-spacing: -0.025em;
                 line-height: 1.1;
@@ -112,7 +110,7 @@ def _inject_styles() -> None:
             [data-testid="stMain"] h2 {
                 font-size: 22px;
                 font-weight: 600;
-                color: #0A0A0A;
+                color: #0F172A;
                 letter-spacing: -0.015em;
                 line-height: 1.25;
                 margin-top: 1.5rem;
@@ -122,7 +120,7 @@ def _inject_styles() -> None:
             [data-testid="stMain"] h3 {
                 font-size: 18px;
                 font-weight: 600;
-                color: #0A0A0A;
+                color: #0F172A;
                 letter-spacing: -0.01em;
                 line-height: 1.3;
                 margin-top: 1.5rem;
@@ -134,44 +132,44 @@ def _inject_styles() -> None:
             [data-testid="stMain"] [data-testid="stMarkdownContainer"] p {
                 font-size: 15px;
                 line-height: 1.55;
-                color: #0A0A0A;
+                color: #0F172A;
             }
             /* Caption — 12px, tracking-wide */
             [data-testid="stMain"] [data-testid="stCaptionContainer"],
             [data-testid="stMain"] [data-testid="stCaptionContainer"] * {
                 font-size: 12px;
                 letter-spacing: 0.04em;
-                color: #6B7280;
+                color: #64748B;
                 line-height: 1.5;
             }
             /* Header subtítulo + meta usan body y caption scale */
             .rrai-header__left { max-width: 70%; }
             .rrai-header__desc {
                 font-size: 15px;
-                color: #6B7280;
+                color: #64748B;
                 margin: 0 0 0.7rem 0;
                 line-height: 1.55;
             }
             .rrai-header__meta {
                 font-size: 12px;
-                color: #9CA3AF;
+                color: #94A3B8;
                 letter-spacing: 0.04em;
             }
             .rrai-header__meta a {
-                color: #6320EE;
+                color: #2E5BFF;
                 text-decoration: none;
                 font-weight: 500;
-                border-bottom: 1px solid rgba(99, 32, 238, 0.25);
+                border-bottom: 1px solid rgba(46, 91, 255, 0.30);
                 transition: border-color 150ms ease;
             }
             .rrai-header__meta a:hover {
-                border-bottom-color: #6320EE;
+                border-bottom-color: #2E5BFF;
             }
 
             /* ──────────────────────────────  Sidebar  ─────────────────────────── */
             section[data-testid="stSidebar"] {
                 background-color: #FFFFFF;
-                border-right: 1px solid rgba(10, 10, 10, 0.06);
+                border-right: 1px solid rgba(46, 91, 255, 0.10);
             }
 
             /* ──────────────────────────────  Stepper (sidebar)  ───────────────── */
@@ -198,7 +196,7 @@ def _inject_styles() -> None:
                 top: -0.35rem;
                 width: 1px;
                 height: 0.7rem;
-                background-color: rgba(10, 10, 10, 0.10);
+                background-color: rgba(46, 91, 255, 0.18);
             }
             .rrai-step__marker {
                 font-variant-numeric: tabular-nums;
@@ -220,18 +218,19 @@ def _inject_styles() -> None:
                 transition: color 200ms ease-out,
                             font-weight 200ms ease-out;
             }
-            /* — Estado completado — */
-            .rrai-step--done .rrai-step__marker { color: #8075FF; font-weight: 600; }
-            .rrai-step--done .rrai-step__label  { color: #6B7280; font-weight: 400; }
-            /* — Estado activo — */
+            /* — Estado completado — (azul de marca, semibold) */
+            .rrai-step--done .rrai-step__marker { color: #2E5BFF; font-weight: 600; }
+            .rrai-step--done .rrai-step__label  { color: #475569; font-weight: 400; }
+            /* — Estado activo — (fondo tinte azul + barra de acento a la izquierda) */
             .rrai-step--active {
-                background-color: rgba(99, 32, 238, 0.07);
+                background-color: rgba(46, 91, 255, 0.08);
+                box-shadow: inset 2px 0 0 0 #2E5BFF;
             }
-            .rrai-step--active .rrai-step__marker { color: #6320EE; font-weight: 700; }
-            .rrai-step--active .rrai-step__label  { color: #0A0A0A; font-weight: 600; }
+            .rrai-step--active .rrai-step__marker { color: #2E5BFF; font-weight: 700; }
+            .rrai-step--active .rrai-step__label  { color: #0F172A; font-weight: 600; }
             /* — Estado futuro — */
-            .rrai-step--future .rrai-step__marker { color: #9CA3AF; font-weight: 400; }
-            .rrai-step--future .rrai-step__label  { color: #9CA3AF; font-weight: 400; }
+            .rrai-step--future .rrai-step__marker { color: #94A3B8; font-weight: 400; }
+            .rrai-step--future .rrai-step__label  { color: #94A3B8; font-weight: 400; }
 
             .rrai-sidebar__brand {
                 padding: 0.25rem 0 0.75rem 0;
@@ -239,20 +238,20 @@ def _inject_styles() -> None:
             .rrai-sidebar__brand-title {
                 font-size: 1.05rem;
                 font-weight: 600;
-                color: #0A0A0A;
+                color: #0F172A;
                 letter-spacing: -0.02em;
             }
             .rrai-sidebar__brand-sub {
                 font-size: 0.7rem;
-                color: #9CA3AF;
+                color: #2E5BFF;
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
                 margin-top: 0.2rem;
-                font-weight: 500;
+                font-weight: 600;
             }
             .rrai-sidebar__section {
                 font-size: 0.68rem;
-                color: #9CA3AF;
+                color: #94A3B8;
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
                 margin-bottom: 0.55rem;
@@ -260,13 +259,15 @@ def _inject_styles() -> None:
             }
 
             /* ──────────────────────────────  Botones  ─────────────────────────── */
-            /* Default — ghost: transparente, hairline border, texto medium-dark */
+            /* Default — ghost: transparente, hairline border, texto slate.
+               Hover y focus viran a tinte azul de marca (nunca texto oscuro
+               sobre fondo oscuro). */
             [data-testid="stMain"] .stButton > button,
             [data-testid="stMain"] [data-testid="stDownloadButton"] button {
                 border-radius: 8px;
-                background-color: transparent;
-                border: 1px solid #E5E7EB;
-                color: #374151;
+                background-color: #FFFFFF;
+                border: 1px solid #CBD5E1;
+                color: #334155;
                 font-weight: 500;
                 font-size: 15px;
                 box-shadow: none;
@@ -276,72 +277,92 @@ def _inject_styles() -> None:
             }
             [data-testid="stMain"] .stButton > button:hover,
             [data-testid="stMain"] [data-testid="stDownloadButton"] button:hover {
-                background-color: #F9FAFB;
-                border-color: #D1D5DB;
-                color: #0A0A0A;
+                background-color: rgba(46, 91, 255, 0.06);
+                border-color: #2E5BFF;
+                color: #2E5BFF;
+            }
+            /* Focus (teclado / click) del ghost — borde azul, texto azul,
+               nunca el primaryColor de Streamlit como fondo */
+            [data-testid="stMain"] .stButton > button:focus:not(:active),
+            [data-testid="stMain"] [data-testid="stDownloadButton"] button:focus:not(:active) {
+                background-color: rgba(46, 91, 255, 0.06);
+                border-color: #2E5BFF;
+                color: #2E5BFF;
+                box-shadow: 0 0 0 3px rgba(46, 91, 255, 0.18);
             }
             /* Disabled — gris, sin sombra, cursor not-allowed */
             [data-testid="stMain"] .stButton > button:disabled,
             [data-testid="stMain"] .stButton > button[disabled],
             [data-testid="stMain"] [data-testid="stDownloadButton"] button:disabled {
-                background-color: #F9FAFB;
-                border-color: #F3F4F6;
-                color: #9CA3AF;
+                background-color: #F1F5F9;
+                border-color: #E2E8F0;
+                color: #94A3B8;
                 cursor: not-allowed;
             }
-            /* Primary — violeta sólido (acento). Aplica a st.button y st.download_button con type="primary" */
+            /* Primary — sólido azul de marca. Texto SIEMPRE blanco en todos los
+               estados (hover/focus/active) para garantizar contraste AA. */
             [data-testid="stMain"] button[kind="primary"] {
-                background-color: #6320EE;
-                border-color: #6320EE;
+                background-color: #2E5BFF;
+                border-color: #2E5BFF;
                 color: #FFFFFF;
-                box-shadow: 0 1px 2px rgba(99, 32, 238, 0.18);
+                box-shadow: 0 1px 2px rgba(46, 91, 255, 0.28);
             }
             [data-testid="stMain"] button[kind="primary"]:hover {
-                background-color: #5018D0;
-                border-color: #5018D0;
+                background-color: #1E40D6;
+                border-color: #1E40D6;
                 color: #FFFFFF;
+            }
+            [data-testid="stMain"] button[kind="primary"]:focus,
+            [data-testid="stMain"] button[kind="primary"]:active,
+            [data-testid="stMain"] button[kind="primary"]:focus:not(:active) {
+                background-color: #1E40D6;
+                border-color: #1E40D6;
+                color: #FFFFFF;
+                box-shadow: 0 0 0 3px rgba(46, 91, 255, 0.30);
             }
 
             /* ──────────────────────────────  Divisores  ───────────────────────── */
             [data-testid="stMain"] hr {
-                border-color: rgba(10, 10, 10, 0.08);
+                border-color: rgba(46, 91, 255, 0.12);
             }
 
             /* ──────────────────────────────  Metric cards (Paso 4)  ───────────── */
             .rrai-metric {
                 background-color: #FFFFFF;
-                border: 1px solid #F3F4F6;
+                border: 1px solid #E2E8F0;
+                border-top: 3px solid #2E5BFF;
                 border-radius: 12px;
                 padding: 20px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+                box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
                 transition: border-color 150ms ease, box-shadow 150ms ease;
             }
             .rrai-metric:hover {
-                border-color: #E5E7EB;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+                border-color: #CBD5E1;
+                border-top-color: #1E40D6;
+                box-shadow: 0 4px 12px rgba(46, 91, 255, 0.12);
             }
             .rrai-metric__label {
                 font-size: 11px;
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 0.08em;
-                color: #6B7280;
+                color: #64748B;
                 margin: 0 0 12px 0;
                 line-height: 1;
             }
             .rrai-metric__value {
                 font-size: 32px;
                 font-weight: 700;
-                color: #0A0A0A;
+                color: #0F172A;
                 letter-spacing: -0.02em;
                 line-height: 1.1;
                 font-variant-numeric: tabular-nums;
                 margin: 0;
             }
 
-            /* ──────────────────────────────  Spinner (acento violeta)  ────────── */
+            /* ──────────────────────────────  Spinner (acento de marca)  ───────── */
             [data-testid="stSpinner"] > div > div {
-                border-top-color: #6320EE !important;
+                border-top-color: #2E5BFF !important;
             }
         </style>
         """,
@@ -373,7 +394,7 @@ def _render_header() -> None:
             st.image(str(LOGO_PATH), use_container_width=True)
 
     st.markdown(
-        '<div style="border-bottom:1px solid rgba(10,10,10,0.08); '
+        '<div style="border-bottom:1px solid rgba(46,91,255,0.12); '
         'margin: 0 0 1.25rem 0;"></div>',
         unsafe_allow_html=True,
     )

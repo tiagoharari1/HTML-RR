@@ -1,7 +1,7 @@
 [theme]
-# Paleta corporativa RR AI
-primaryColor = "#8075FF"
-backgroundColor = "#6320EE"
-secondaryBackgroundColor = "#F8F0FB"
-textColor = "#211A1D"
+# Paleta RR AI — "Despegar Blue": fondos claros + azul de marca como acento
+primaryColor = "#2E5BFF"
+backgroundColor = "#F7F9FC"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0F172A"
 font = "sans serif"
