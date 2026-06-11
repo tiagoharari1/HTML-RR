@@ -74,9 +74,31 @@ def render() -> bool:
 
     inicio = _shift_month(fecha_pivot, 0)
     fin = _shift_month(fecha_pivot, int(horizonte) - 1)
-    st.caption(
-        f"Se proyectarán **{int(horizonte)} meses**: "
-        f"{_label_mes(inicio)} → {_label_mes(fin)}."
+    st.markdown(
+        f"""
+        <div style="
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            background:rgba(46,91,255,0.06);
+            border:1px solid rgba(46,91,255,0.18);
+            border-radius:8px;
+            padding:8px 14px;
+            margin: 4px 0 1rem 0;
+            font-size:13px;
+            color:#2E5BFF;
+            font-weight:500;
+        ">
+            <span style="font-size:15px;">📅</span>
+            <span>
+                {int(horizonte)} meses proyectados:&nbsp;
+                <strong>{_label_mes(inicio)}</strong>
+                &nbsp;→&nbsp;
+                <strong>{_label_mes(fin)}</strong>
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     escenario = st.text_input(

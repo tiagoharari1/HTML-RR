@@ -53,23 +53,16 @@ STEP_RENDERERS = [
 
 
 def _inject_styles() -> None:
-    """Estilos globales (paleta de marca Despegar, stepper, botones).
-
-    Paleta "Despegar Blue" — fondos claros + azul de marca como acento:
-      - Background main  #F7F9FC  (tinte azulado casi-blanco — canvas)
-      - Background side  #FFFFFF  (blanco puro — sidebar / cards)
-      - Text primary     #0F172A  (slate-900, negro-navy cálido)
-      - Text secondary   #64748B
-      - Text muted       #94A3B8
-      - Brand / Accent   #2E5BFF  (azul Despegar — botón primario, paso activo, links, spinner)
-      - Brand hover      #1E40D6  (azul más profundo)
-      - Brand tint       rgba(46,91,255,0.08)  (fondo paso activo, hovers sutiles)
-      - Brand soft       #64748B  (gris medio — paso completado)
-      - Hairline         rgba(46,91,255,0.10)
-    """
+    """Estilos globales (paleta de marca Despegar, stepper, botones)."""
     st.markdown(
         """
         <style>
+            /* ──────────────────────────────  Variables de easing  ──────────────── */
+            :root {
+                --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+                --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+            }
+
             /* ──────────────────────────────  Tipografía base  ──────────────────── */
             html, body, [class*="css"] {
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -86,7 +79,6 @@ def _inject_styles() -> None:
             [data-testid="stAppViewContainer"] {
                 background-color: #F7F9FC;
             }
-            /* Max-width centrado para que el contenido no se desparrame en monitores grandes */
             [data-testid="stMain"] .block-container {
                 max-width: 1200px;
                 margin-left: auto;
@@ -96,7 +88,6 @@ def _inject_styles() -> None:
             }
 
             /* ──────────────────────────────  Jerarquía tipográfica  ────────────── */
-            /* Display — sólo el título principal del header */
             .rrai-header__title {
                 font-size: 36px;
                 font-weight: 700;
@@ -105,7 +96,6 @@ def _inject_styles() -> None:
                 letter-spacing: -0.025em;
                 line-height: 1.1;
             }
-            /* Heading — st.header (h2) */
             [data-testid="stMain"] h1,
             [data-testid="stMain"] h2 {
                 font-size: 22px;
@@ -116,7 +106,6 @@ def _inject_styles() -> None:
                 margin-top: 1.5rem;
                 margin-bottom: 0.85rem;
             }
-            /* Subheading — st.subheader (h3) */
             [data-testid="stMain"] h3 {
                 font-size: 18px;
                 font-weight: 600;
@@ -126,7 +115,6 @@ def _inject_styles() -> None:
                 margin-top: 1.5rem;
                 margin-bottom: 0.6rem;
             }
-            /* Body */
             [data-testid="stMain"] p,
             [data-testid="stMain"] li,
             [data-testid="stMain"] [data-testid="stMarkdownContainer"] p {
@@ -134,7 +122,6 @@ def _inject_styles() -> None:
                 line-height: 1.55;
                 color: #0F172A;
             }
-            /* Caption — 12px, tracking-wide */
             [data-testid="stMain"] [data-testid="stCaptionContainer"],
             [data-testid="stMain"] [data-testid="stCaptionContainer"] * {
                 font-size: 12px;
@@ -142,7 +129,6 @@ def _inject_styles() -> None:
                 color: #64748B;
                 line-height: 1.5;
             }
-            /* Header subtítulo + meta usan body y caption scale */
             .rrai-header__left { max-width: 70%; }
             .rrai-header__desc {
                 font-size: 15px;
@@ -160,11 +146,9 @@ def _inject_styles() -> None:
                 text-decoration: none;
                 font-weight: 500;
                 border-bottom: 1px solid rgba(46, 91, 255, 0.30);
-                transition: border-color 150ms ease;
+                transition: border-color 150ms var(--ease-out);
             }
-            .rrai-header__meta a:hover {
-                border-bottom-color: #2E5BFF;
-            }
+            .rrai-header__meta a:hover { border-bottom-color: #2E5BFF; }
 
             /* ──────────────────────────────  Sidebar  ─────────────────────────── */
             section[data-testid="stSidebar"] {
@@ -172,7 +156,7 @@ def _inject_styles() -> None:
                 border-right: 1px solid rgba(46, 91, 255, 0.10);
             }
 
-            /* ──────────────────────────────  Stepper (sidebar)  ───────────────── */
+            /* ──────────────────────────────  Stepper  ──────────────────────────── */
             .rrai-stepper {
                 display: flex;
                 flex-direction: column;
@@ -183,20 +167,25 @@ def _inject_styles() -> None:
                 display: flex;
                 align-items: center;
                 gap: 0.75rem;
-                padding: 0.55rem 0.75rem;
+                padding: 0.6rem 0.75rem;
                 border-radius: 8px;
                 position: relative;
-                transition: background-color 200ms ease-out,
-                            color 200ms ease-out;
+                transition: background-color 200ms var(--ease-out);
             }
+            /* Conector vertical entre pasos */
             .rrai-step + .rrai-step::before {
                 content: '';
                 position: absolute;
-                left: 1.5rem;
-                top: -0.35rem;
-                width: 1px;
-                height: 0.7rem;
-                background-color: rgba(46, 91, 255, 0.18);
+                left: 1.55rem;
+                top: -0.5rem;
+                width: 2px;
+                height: 1rem;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(46, 91, 255, 0.22),
+                    rgba(46, 91, 255, 0.08)
+                );
+                border-radius: 1px;
             }
             .rrai-step__marker {
                 font-variant-numeric: tabular-nums;
@@ -204,64 +193,76 @@ def _inject_styles() -> None:
                 letter-spacing: 0.05em;
                 min-width: 1.6rem;
                 display: inline-flex;
-                align-items: baseline;
+                align-items: center;
                 gap: 0.25rem;
-                transition: color 200ms ease-out,
-                            font-weight 200ms ease-out;
+                transition: color 200ms var(--ease-out),
+                            font-weight 200ms var(--ease-out);
+            }
+            /* Dot de estado en paso activo */
+            .rrai-step__dot {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background-color: #2E5BFF;
+                flex-shrink: 0;
+            }
+            .rrai-step--active .rrai-step__dot {
+                animation: pulse-ring 2s var(--ease-out) infinite;
+            }
+            @keyframes pulse-ring {
+                0%   { box-shadow: 0 0 0 0 rgba(46, 91, 255, 0.40); }
+                60%  { box-shadow: 0 0 0 5px rgba(46, 91, 255, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(46, 91, 255, 0); }
             }
             .rrai-step__check {
                 font-size: 0.7rem;
                 line-height: 1;
             }
             .rrai-step__label {
-                font-size: 0.9rem;
-                transition: color 200ms ease-out,
-                            font-weight 200ms ease-out;
+                font-size: 0.875rem;
+                transition: color 200ms var(--ease-out),
+                            font-weight 200ms var(--ease-out);
             }
-            /* — Estado completado — (azul de marca, semibold) */
+            /* Completado */
             .rrai-step--done .rrai-step__marker { color: #2E5BFF; font-weight: 600; }
             .rrai-step--done .rrai-step__label  { color: #475569; font-weight: 400; }
-            /* — Estado activo — (fondo tinte azul + barra de acento a la izquierda) */
+            /* Activo */
             .rrai-step--active {
                 background-color: rgba(46, 91, 255, 0.08);
                 box-shadow: inset 2px 0 0 0 #2E5BFF;
             }
             .rrai-step--active .rrai-step__marker { color: #2E5BFF; font-weight: 700; }
             .rrai-step--active .rrai-step__label  { color: #0F172A; font-weight: 600; }
-            /* — Estado futuro — */
-            .rrai-step--future .rrai-step__marker { color: #94A3B8; font-weight: 400; }
+            /* Futuro */
+            .rrai-step--future .rrai-step__marker { color: #CBD5E1; font-weight: 400; }
             .rrai-step--future .rrai-step__label  { color: #94A3B8; font-weight: 400; }
 
-            .rrai-sidebar__brand {
-                padding: 0.25rem 0 0.75rem 0;
-            }
+            .rrai-sidebar__brand { padding: 0.25rem 0 0.75rem 0; }
             .rrai-sidebar__brand-title {
                 font-size: 1.05rem;
-                font-weight: 600;
+                font-weight: 700;
                 color: #0F172A;
                 letter-spacing: -0.02em;
             }
             .rrai-sidebar__brand-sub {
-                font-size: 0.7rem;
+                font-size: 0.68rem;
                 color: #2E5BFF;
-                letter-spacing: 0.08em;
+                letter-spacing: 0.10em;
                 text-transform: uppercase;
                 margin-top: 0.2rem;
                 font-weight: 600;
             }
             .rrai-sidebar__section {
-                font-size: 0.68rem;
-                color: #94A3B8;
-                letter-spacing: 0.08em;
+                font-size: 0.65rem;
+                color: #CBD5E1;
+                letter-spacing: 0.10em;
                 text-transform: uppercase;
                 margin-bottom: 0.55rem;
-                font-weight: 600;
+                font-weight: 700;
             }
 
             /* ──────────────────────────────  Botones  ─────────────────────────── */
-            /* Default — ghost: transparente, hairline border, texto slate.
-               Hover y focus viran a tinte azul de marca (nunca texto oscuro
-               sobre fondo oscuro). */
             [data-testid="stMain"] .stButton > button,
             [data-testid="stMain"] [data-testid="stDownloadButton"] button {
                 border-radius: 8px;
@@ -271,9 +272,11 @@ def _inject_styles() -> None:
                 font-weight: 500;
                 font-size: 15px;
                 box-shadow: none;
-                transition: background-color 150ms ease,
-                            border-color 150ms ease,
-                            color 150ms ease;
+                transition: background-color 150ms var(--ease-out),
+                            border-color   150ms var(--ease-out),
+                            color          150ms var(--ease-out),
+                            transform      160ms var(--ease-out),
+                            box-shadow     150ms var(--ease-out);
             }
             [data-testid="stMain"] .stButton > button:hover,
             [data-testid="stMain"] [data-testid="stDownloadButton"] button:hover {
@@ -281,8 +284,11 @@ def _inject_styles() -> None:
                 border-color: #2E5BFF;
                 color: #2E5BFF;
             }
-            /* Focus (teclado / click) del ghost — borde azul, texto azul,
-               nunca el primaryColor de Streamlit como fondo */
+            /* Press feedback — escala táctil */
+            [data-testid="stMain"] .stButton > button:active,
+            [data-testid="stMain"] [data-testid="stDownloadButton"] button:active {
+                transform: scale(0.97);
+            }
             [data-testid="stMain"] .stButton > button:focus:not(:active),
             [data-testid="stMain"] [data-testid="stDownloadButton"] button:focus:not(:active) {
                 background-color: rgba(46, 91, 255, 0.06);
@@ -290,77 +296,226 @@ def _inject_styles() -> None:
                 color: #2E5BFF;
                 box-shadow: 0 0 0 3px rgba(46, 91, 255, 0.18);
             }
-            /* Disabled — gris, sin sombra, cursor not-allowed */
             [data-testid="stMain"] .stButton > button:disabled,
             [data-testid="stMain"] .stButton > button[disabled],
             [data-testid="stMain"] [data-testid="stDownloadButton"] button:disabled {
-                background-color: #F1F5F9;
+                background-color: #F8FAFC;
                 border-color: #E2E8F0;
-                color: #94A3B8;
+                color: #CBD5E1;
                 cursor: not-allowed;
             }
-            /* Primary — sólido azul de marca. Texto SIEMPRE blanco en todos los
-               estados (hover/focus/active) para garantizar contraste AA. */
+            /* Primary */
             [data-testid="stMain"] button[kind="primary"] {
                 background-color: #2E5BFF;
                 border-color: #2E5BFF;
                 color: #FFFFFF;
-                box-shadow: 0 1px 2px rgba(46, 91, 255, 0.28);
+                box-shadow: 0 1px 3px rgba(46, 91, 255, 0.30),
+                            0 1px 2px rgba(46, 91, 255, 0.20);
             }
             [data-testid="stMain"] button[kind="primary"]:hover {
-                background-color: #1E40D6;
-                border-color: #1E40D6;
+                background-color: #1E49EF;
+                border-color: #1E49EF;
+                color: #FFFFFF;
+                box-shadow: 0 4px 12px rgba(46, 91, 255, 0.32);
+            }
+            [data-testid="stMain"] button[kind="primary"]:active {
+                transform: scale(0.97);
+                background-color: #1A3FD6;
+                border-color: #1A3FD6;
                 color: #FFFFFF;
             }
-            [data-testid="stMain"] button[kind="primary"]:focus,
-            [data-testid="stMain"] button[kind="primary"]:active,
             [data-testid="stMain"] button[kind="primary"]:focus:not(:active) {
-                background-color: #1E40D6;
-                border-color: #1E40D6;
+                background-color: #1E49EF;
+                border-color: #1E49EF;
                 color: #FFFFFF;
                 box-shadow: 0 0 0 3px rgba(46, 91, 255, 0.30);
             }
 
-            /* ──────────────────────────────  Divisores  ───────────────────────── */
-            [data-testid="stMain"] hr {
-                border-color: rgba(46, 91, 255, 0.12);
+            /* ──────────────────────────────  Form inputs  ──────────────────────── */
+            [data-testid="stMain"] [data-testid="stTextInput"] input,
+            [data-testid="stMain"] [data-testid="stNumberInput"] input,
+            [data-testid="stMain"] [data-testid="stDateInput"] input {
+                border-radius: 8px;
+                border-color: #CBD5E1;
+                font-size: 14px;
+                transition: border-color 150ms var(--ease-out),
+                            box-shadow   150ms var(--ease-out);
+            }
+            [data-testid="stMain"] [data-testid="stTextInput"] input:focus,
+            [data-testid="stMain"] [data-testid="stNumberInput"] input:focus,
+            [data-testid="stMain"] [data-testid="stDateInput"] input:focus {
+                border-color: #2E5BFF !important;
+                box-shadow: 0 0 0 3px rgba(46, 91, 255, 0.15) !important;
+            }
+            /* Selectbox */
+            [data-testid="stMain"] [data-testid="stSelectbox"] > div > div {
+                border-radius: 8px;
+                border-color: #CBD5E1;
+                transition: border-color 150ms var(--ease-out),
+                            box-shadow   150ms var(--ease-out);
+            }
+            [data-testid="stMain"] [data-testid="stSelectbox"] > div > div:focus-within {
+                border-color: #2E5BFF !important;
+                box-shadow: 0 0 0 3px rgba(46, 91, 255, 0.15) !important;
+            }
+            /* File uploader */
+            [data-testid="stMain"] [data-testid="stFileUploader"] > section {
+                border-radius: 12px;
+                border: 2px dashed #CBD5E1;
+                background-color: #FAFBFD;
+                transition: border-color 200ms var(--ease-out),
+                            background-color 200ms var(--ease-out);
+            }
+            [data-testid="stMain"] [data-testid="stFileUploader"] > section:hover {
+                border-color: #2E5BFF;
+                background-color: rgba(46, 91, 255, 0.03);
+            }
+            /* Expander */
+            [data-testid="stMain"] [data-testid="stExpander"] {
+                border: 1px solid #E2E8F0;
+                border-radius: 10px;
+                background-color: #FFFFFF;
+            }
+            [data-testid="stMain"] [data-testid="stExpander"]:hover {
+                border-color: #CBD5E1;
             }
 
-            /* ──────────────────────────────  Metric cards (Paso 4)  ───────────── */
+            /* ──────────────────────────────  Divisores  ───────────────────────── */
+            [data-testid="stMain"] hr {
+                border-color: rgba(46, 91, 255, 0.10);
+            }
+
+            /* ──────────────────────────────  Metric cards  ─────────────────────── */
             .rrai-metric {
                 background-color: #FFFFFF;
                 border: 1px solid #E2E8F0;
                 border-top: 3px solid #2E5BFF;
                 border-radius: 12px;
-                padding: 20px;
-                box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-                transition: border-color 150ms ease, box-shadow 150ms ease;
+                padding: 20px 20px 18px;
+                box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+                transition: transform    200ms var(--ease-out),
+                            border-color 150ms var(--ease-out),
+                            box-shadow   200ms var(--ease-out);
             }
-            .rrai-metric:hover {
-                border-color: #CBD5E1;
-                border-top-color: #1E40D6;
-                box-shadow: 0 4px 12px rgba(46, 91, 255, 0.12);
+            @media (hover: hover) and (pointer: fine) {
+                .rrai-metric:hover {
+                    transform: translateY(-2px);
+                    border-top-color: #1E49EF;
+                    box-shadow: 0 8px 24px rgba(46, 91, 255, 0.12);
+                }
             }
             .rrai-metric__label {
                 font-size: 11px;
                 font-weight: 600;
                 text-transform: uppercase;
-                letter-spacing: 0.08em;
-                color: #64748B;
-                margin: 0 0 12px 0;
+                letter-spacing: 0.09em;
+                color: #94A3B8;
+                margin: 0 0 10px 0;
                 line-height: 1;
             }
             .rrai-metric__value {
-                font-size: 32px;
+                font-size: 30px;
                 font-weight: 700;
                 color: #0F172A;
-                letter-spacing: -0.02em;
+                letter-spacing: -0.025em;
                 line-height: 1.1;
                 font-variant-numeric: tabular-nums;
                 margin: 0;
             }
+            .rrai-metric__unit {
+                font-size: 14px;
+                font-weight: 500;
+                color: #94A3B8;
+                margin-left: 2px;
+                letter-spacing: 0;
+            }
 
-            /* ──────────────────────────────  Spinner (acento de marca)  ───────── */
+            /* ──────────────────────────────  Section labels  ───────────────────── */
+            .rrai-section {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin: 1.5rem 0 0.75rem 0;
+            }
+            .rrai-section__pill {
+                font-size: 0.68rem;
+                font-weight: 700;
+                letter-spacing: 0.10em;
+                text-transform: uppercase;
+                color: #2E5BFF;
+                background: rgba(46, 91, 255, 0.08);
+                padding: 3px 10px;
+                border-radius: 100px;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .rrai-section__line {
+                flex: 1;
+                height: 1px;
+                background: rgba(46, 91, 255, 0.10);
+            }
+
+            /* ──────────────────────────────  Legend pills  ─────────────────────── */
+            .rrai-legend {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+                margin: 0.5rem 0 0.25rem 0;
+            }
+            .rrai-legend__item {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                font-weight: 500;
+                color: #475569;
+                background: #FFFFFF;
+                border: 1px solid #E2E8F0;
+                border-radius: 100px;
+                padding: 4px 10px 4px 8px;
+            }
+            .rrai-legend__dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 2px;
+                flex-shrink: 0;
+            }
+
+            /* ──────────────────────────────  Empty state  ──────────────────────── */
+            .rrai-empty {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 3.5rem 2rem;
+                border: 2px dashed #E2E8F0;
+                border-radius: 16px;
+                background: #FAFBFD;
+                margin: 1rem 0;
+            }
+            .rrai-empty__icon {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                opacity: 0.5;
+            }
+            .rrai-empty__title {
+                font-size: 17px;
+                font-weight: 600;
+                color: #334155;
+                margin: 0 0 0.4rem 0;
+                letter-spacing: -0.01em;
+            }
+            .rrai-empty__desc {
+                font-size: 14px;
+                color: #94A3B8;
+                margin: 0;
+                max-width: 340px;
+                line-height: 1.5;
+            }
+
+            /* ──────────────────────────────  Spinner  ──────────────────────────── */
             [data-testid="stSpinner"] > div > div {
                 border-top-color: #2E5BFF !important;
             }

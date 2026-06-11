@@ -66,7 +66,10 @@ def render_sidebar() -> None:
             )
         elif i == current:
             state = "active"
-            marker = f'<span class="rrai-step__num">{num}</span>'
+            marker = (
+                f'<span class="rrai-step__num">{num}</span>'
+                f'<span class="rrai-step__dot"></span>'
+            )
         else:
             state = "future"
             marker = f'<span class="rrai-step__num">{num}</span>'

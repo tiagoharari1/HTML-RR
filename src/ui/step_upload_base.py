@@ -10,11 +10,33 @@ from src.io.validators import validate_base_2026
 def render() -> bool:
     """Renderiza el step. Devuelve True si el step está completo."""
     st.header("Paso 1 · Cargar Base 2026")
-    st.write(
-        "Subí el archivo Excel con los datos transaccionales MTD del canal "
-        "HTML/B2B. Esperado: hoja `Base 2026` con columnas `Mes RI`, `pais`, "
-        "`marca`, `LOB`, `productooriginal`, `viaje`, `gross_bookings`, "
-        "`orders`, y todas las líneas transaccionales."
+    st.markdown(
+        """
+        <div style="
+            background:#FFFFFF;
+            border:1px solid #E2E8F0;
+            border-left:3px solid #2E5BFF;
+            border-radius:10px;
+            padding:14px 16px;
+            margin-bottom:1rem;
+        ">
+            <div style="font-size:13px;font-weight:600;color:#0F172A;margin-bottom:4px;">
+                Archivo esperado
+            </div>
+            <div style="font-size:13px;color:#64748B;line-height:1.55;">
+                Excel <strong>(.xlsx)</strong> con hoja
+                <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12px;">Base 2026</code>
+                — columnas mínimas:
+                <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12px;">Mes RI</code>,
+                <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12px;">pais</code>,
+                <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12px;">LOB</code>,
+                <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12px;">gross_bookings</code>,
+                <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12px;">orders</code>
+                y todas las líneas transaccionales.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     uploaded = st.file_uploader(
