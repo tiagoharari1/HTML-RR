@@ -26,7 +26,23 @@
       "Bash(Sort-Object FullName)",
       "Bash(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import pandas as pd; df = pd.read_csv\\('output/actuals.csv', encoding='utf-8-sig', sep=None, engine='python'\\); print\\(df.columns.tolist\\(\\)\\); print\\(df.head\\(3\\).to_string\\(\\)\\)\")",
       "Bash(.venv/Scripts/python.exe -)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git push *)",
+      "Skill(run)",
+      "Bash(.venv/Scripts/python.exe -c \"import streamlit, pandas, plotly; print\\('deps OK'\\)\")",
+      "Bash(.venv/Scripts/streamlit.exe run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8502/)",
+      "Bash(pkill -f \"streamlit run\")",
+      "Bash(taskkill /F /IM streamlit.exe)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8503/)",
+      "Bash(rm -f screenshot_paso1.png screenshot_paso2.png screenshot_full_paso1.png screenshot_paso4.png screenshot_paso4_v2.png)",
+      "Bash(mkdir -p \"c:\\\\Users\\\\tiago.harari\\\\Desktop\\\\RR AI\\\\.claude\\\\skills\\\\logica-financiera\")",
+      "Bash(python -m pytest tests/ -q)",
+      "Bash(python -m pytest tests/test_logica.py -q -k \"shape or continuidad or piso or calibracion or flags\")",
+      "Bash(git commit -q -m ' *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\tiago.harari\\Desktop\\RR AI\\.claude\\skills"
     ]
   }
 }

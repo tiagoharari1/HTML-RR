@@ -26,6 +26,10 @@ from __future__ import annotations
 import pandas as pd
 
 from config.settings import LINEAS_DESDE_BASE_2025
+from src.logica.lineas_transaccionales import (
+    _ratio_mediana_por_combo,
+    _ratio_pivot_por_combo,
+)
 
 _KEY_COLS = ["pais", "marca", "viaje", "producto"]
 
@@ -33,33 +37,35 @@ _KEY_COLS = ["pais", "marca", "viaje", "producto"]
 def calcular_ratios_base_2025(
     base_2025: pd.DataFrame,
     mes_pivot: int,
+    usar_mediana: bool = True,
 ) -> pd.DataFrame:
-    """Calcula ratio = linea / gross_bookings por combo en mes_pivot.
+    """Calcula ratio = linea / gross_bookings por combo desde Base 2025.
+
+    Si `usar_mediana` (default), usa la **mediana** de los ratios mensuales de
+    todos los 12 meses de Base 2025 (histórico completo, más robusto). Si no,
+    replica la v1 tomando sólo el mes pivot.
 
     Returns:
         DataFrame con _KEY_COLS + una columna `ratio_<linea>` por línea.
     """
-    df = base_2025.loc[base_2025["Mes"] == mes_pivot].copy()
-    df = df.rename(columns={"productooriginal": "producto"})
-
+    df = base_2025.rename(columns={"productooriginal": "producto"}).copy()
     cols_existentes = [c for c in LINEAS_DESDE_BASE_2025 if c in df.columns]
-    agg = (
-        df.groupby(_KEY_COLS, dropna=False)[["gross_bookings", *cols_existentes]]
-        .sum()
-        .reset_index()
-    )
 
-    for linea in LINEAS_DESDE_BASE_2025:
-        if linea in cols_existentes:
-            agg[f"ratio_{linea}"] = agg.apply(
-                lambda r: (r[linea] / r["gross_bookings"]) if r["gross_bookings"] else 0.0,
-                axis=1,
-            )
-        else:
-            agg[f"ratio_{linea}"] = 0.0
+    if usar_mediana:
+        # Base 2025 es histórico completo: usamos los 12 meses como muestra
+        # (pivot=12 incluye todos los meses disponibles).
+        ratios = _ratio_mediana_por_combo(
+            df, "Mes", 12, cols_existentes, LINEAS_DESDE_BASE_2025
+        )
+    else:
+        ratios = _ratio_pivot_por_combo(
+            df.loc[df["Mes"] == mes_pivot],
+            cols_existentes,
+            LINEAS_DESDE_BASE_2025,
+        )
 
     keep = _KEY_COLS + [f"ratio_{l}" for l in LINEAS_DESDE_BASE_2025]
-    return agg[keep]
+    return ratios[keep]
 
 
 def proyectar_lineas_base_2025(

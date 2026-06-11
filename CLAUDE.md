@@ -202,6 +202,28 @@ DataFrame final con:
   (`"Other Countries"`, `"Uruguay"`, `"Paraguay"`). M2 los deja pasar — el
   mapeo a códigos es responsabilidad de M14.
 
+### Sprint de mejora financiera (2026-06-11)
+
+Objetivo: que las proyecciones de run rate sean coherentes con la realidad
+observada, no con un mes pivot potencialmente parcial. Detalle completo en
+`docs/notas_logica_financiera.md`. Decisiones tomadas con el usuario:
+
+1. **Ancla de nivel = actuals reales calibrados**. Nuevo módulo
+   `src/logica/calibracion.py`: `cal = actuals[mes_pivot] / agregado_Base2026`.
+   El Mes 1 reproduce el nivel real (mayo: 33.9k crudo → 52.9k real).
+2. **Tendencia del budget al 30%**. `shape_proyeccion()` hace blend
+   `0.7·estacionalidad + 0.3·budget` (ambas normalizadas al pivot).
+3. **Ratios de líneas por mediana** de varios meses (no el ratio único del
+   pivot): `calcular_ratios_base_2026/2025(usar_mediana=True)`.
+4. **Continuidad: piso + warning**. `aplicar_piso_continuidad()` eleva meses
+   que caen <5% de la mediana del combo; `validar_continuidad_pnl()` valida.
+   Warnings/info en `pnl.attrs[...]`, mostrados en la UI (Paso 4).
+5. `build_pnl()` suma flags keyword-only (todos ON por default, degradan a v1):
+   `usar_actuals`, `usar_budget`, `peso_budget`, `usar_mediana_ratios`,
+   `aplicar_piso`, `umbral_continuidad`.
+6. El modelo diverge a propósito del Excel (que no usa actuals/budget): la
+   tolerancia del test contra el Excel subió de 15% → 20% (cota de sanidad).
+
 ---
 
 ## 5. Estructura del repositorio

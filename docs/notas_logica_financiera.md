@@ -90,6 +90,71 @@ Resultados observados con `mes_pivot=5, dia_corte=20`:
 La sobreestimación sistemática del net_revenue se origina principalmente
 en `up_front_incentives` (el Excel usa ratios de April; v1 usa mes_pivot).
 
+## Sprint de mejora financiera (2026-06-11) — ancla a datos reales
+
+La v1 proyectaba cada línea a partir del **mes pivot crudo** de Base 2026.
+Cuando ese mes es un MTD parcial (e.g. mayo: 33.9k orders en Base 2026 vs
+~52.9k reales) toda la proyección quedaba ~35% por debajo de la realidad y
+sin tendencia. El modelo nuevo ancla a datos reales y mantiene continuidad.
+
+### 1. Calibración de nivel contra actuals (`src/logica/calibracion.py`)
+
+`factores_calibracion(orders_pivot, gb_pivot, mes_pivot)` calcula
+`cal = actuals[mes_pivot] / agregado_pivot_Base2026` por métrica. El nivel del
+pivot se multiplica por `cal`, de modo que el **Mes 1 reproduce el nivel real
+observado** en `output/actuals.csv`. Si el pivot no tiene actuals, usa el
+último mes disponible como proxy; sin actuals, `cal = 1.0` (comportamiento v1).
+
+- El ASP se calibra con `cal_gb / cal_orders` para que `GB = orders × ASP`
+  quede anclado al GB real.
+- Verificado: con `mes_pivot=5` el Mes 1 de orders pasa de 33.9k → **52,924**
+  (= actual real de mayo).
+
+### 2. Tendencia del budget en la forma de la curva
+
+`shape_proyeccion(indice_m, indice_pivot, budget_rel_m, peso_budget)` combina:
+
+```
+shape = (1 - peso) · (indice_m / indice_pivot)  +  peso · (budget[m] / budget[pivot])
+```
+
+Ambas señales valen 1.0 en el pivot (Mes 1 = nivel ancla). `peso_budget = 0.30`
+por default (decisión del usuario): la curva sigue siendo fiel a la
+estacionalidad del Excel pero se inclina hacia la trayectoria del budget. Con
+`peso = 0` o sin budget, se reduce a la estacionalidad pura (v1).
+
+### 3. Ratios de líneas por mediana
+
+`calcular_ratios_base_2026/2025(..., usar_mediana=True)` calculan el ratio
+`linea / gross_bookings` para **cada mes disponible** y toman la **mediana**
+entre meses (Base 2026: meses ≤ pivot; Base 2025: los 12 meses). Más robusto a
+outliers de un mes atípico que el ratio único del pivot de la v1.
+
+### 4. Continuidad (piso + validación)
+
+`aplicar_piso_continuidad(gb_proy, umbral=0.05)`: ningún mes proyectado puede
+caer por debajo del `5%` de la **mediana** de orders del combo; si lo hace, se
+eleva al piso, se recalcula `GB = orders × ASP` y se reporta como warning. Se
+usa la mediana (no el promedio) porque es estable bajo el propio piso.
+`validar_continuidad_pnl()` corre al final como chequeo residual. Los warnings
+e info quedan en `pnl.attrs["warnings_continuidad"]` / `["info_calibracion"]` y
+se muestran en la UI (Paso 4) en expanders colapsables.
+
+### Interfaz
+
+`build_pnl()` agrega flags keyword-only, todos activos por default y
+backward-compatibles (degradan a v1 si falta el dato o se desactivan):
+`usar_actuals`, `usar_budget`, `peso_budget=0.30`, `usar_mediana_ratios`,
+`aplicar_piso`, `umbral_continuidad=0.05`.
+
+### Impacto en el test contra el Excel
+
+El Excel original no usa actuals ni budget, así que el modelo nuevo diverge
+**a propósito**. La divergencia máxima observada subió a ~18% (dominada por la
+mediana de ratios vs el ratio único del pivot del Excel), por lo que el test
+`test_comparacion_contra_excel_original` pasó su tolerancia de 15% → **20%**:
+el Excel dejó de ser fuente de verdad única y pasó a ser una cota de sanidad.
+
 ## Hoja Macro — pendiente para v2
 
 La hoja Macro tiene FX (mensual, 2024-01..2027-03) y CPI por país en

@@ -258,15 +258,58 @@ def _grafico_rr_vs_budget(pnl_filt: pd.DataFrame) -> None:
     for trace in fig.data:
         trace.line.dash = dash_map.get(trace.name, "solid")
 
+    fig.update_traces(
+        hovertemplate="<b>%{x}</b><br>%{y:,.0f}<extra></extra>",
+        line=dict(width=2.5),
+        marker=dict(size=6),
+    )
     fig.update_layout(
-        xaxis=dict(gridcolor="rgba(46,91,255,0.08)"),
-        yaxis=dict(gridcolor="rgba(46,91,255,0.08)", tickformat=",.0f"),
+        xaxis=dict(
+            gridcolor="rgba(46,91,255,0.07)",
+            linecolor="rgba(46,91,255,0.12)",
+            tickfont=dict(size=12, color="#64748B"),
+            title=None,
+        ),
+        yaxis=dict(
+            gridcolor="rgba(46,91,255,0.07)",
+            linecolor="rgba(46,91,255,0.12)",
+            tickformat=",.0f",
+            tickfont=dict(size=12, color="#64748B"),
+            title=None,
+        ),
         plot_bgcolor="#FFFFFF",
         paper_bgcolor="#FFFFFF",
-        font=dict(color="#0F172A"),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        font=dict(
+            family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif",
+            color="#0F172A",
+            size=13,
+        ),
+        title=dict(
+            text="Run Rate vs Budget",
+            font=dict(size=15, weight=600, color="#0F172A"),
+            x=0,
+            xanchor="left",
+            pad=dict(l=0, t=0),
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.04,
+            xanchor="right",
+            x=1,
+            font=dict(size=12),
+            bgcolor="rgba(255,255,255,0)",
+            borderwidth=0,
+        ),
+        margin=dict(l=0, r=0, t=48, b=0),
+        hovermode="x unified",
+        hoverlabel=dict(
+            bgcolor="#FFFFFF",
+            bordercolor="#E2E8F0",
+            font=dict(size=12, color="#0F172A"),
+        ),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
 def _render_metric_cards(df: pd.DataFrame) -> None:
@@ -295,14 +338,54 @@ def _render_metric_cards(df: pd.DataFrame) -> None:
             )
 
 
+def _render_avisos_calidad(pnl: pd.DataFrame) -> None:
+    """Muestra info de calibración y warnings de continuidad de la proyección.
+
+    Lee `pnl.attrs["info_calibracion"]` (mensajes informativos del ancla a
+    actuals) y `pnl.attrs["warnings_continuidad"]` (quiebres anómalos detectados
+    y/o corregidos por el piso). No renderiza nada si no hay mensajes.
+    """
+    info = pnl.attrs.get("info_calibracion") or []
+    warns = pnl.attrs.get("warnings_continuidad") or []
+
+    if info:
+        with st.expander(f":material/tune: Calibración aplicada ({len(info)})", expanded=False):
+            for m in info:
+                st.caption(f"• {m}")
+
+    if warns:
+        with st.expander(
+            f":material/warning: Avisos de continuidad ({len(warns)})", expanded=False
+        ):
+            st.caption(
+                "Meses proyectados que caían muy por debajo del nivel observado "
+                "del combo. Se elevaron a un piso para mantener la serie continua."
+            )
+            for w in warns[:200]:
+                st.caption(f"• {w}")
+            if len(warns) > 200:
+                st.caption(f"… y {len(warns) - 200} más.")
+
+
+def _render_section(title: str) -> None:
+    """Pill label + hairline — separador visual de sección."""
+    st.markdown(
+        f'<div class="rrai-section">'
+        f'<span class="rrai-section__pill">{title}</span>'
+        f'<div class="rrai-section__line"></div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
 def _render_action_row(pnl: pd.DataFrame | None) -> None:
     """Action row con jerarquía visual según el estado del flujo.
 
-    Pre-ejecución: Ejecutar = primary, botones de descarga = disabled.
+    Pre-ejecución: Ejecutar = primary (col más ancha), descargas = disabled.
     Post-ejecución: Ejecutar degrada a ghost ("Re-ejecutar"), descargas = primary.
     """
     ya_ejecutado = pnl is not None
-    col_run, col_dl, col_evo = st.columns([1, 1, 1])
+    col_run, col_dl, col_evo = st.columns([2, 1.5, 1.5])
 
     with col_run:
         if ya_ejecutado:
@@ -530,18 +613,27 @@ def _render_tabla_evolucion(pnl_filt: pd.DataFrame, mes_pivot: int) -> None:
     df_evo.loc["Sales & Marketing"] = sam_serie
     df_evo.loc[_OC_LABEL] = oc_serie
 
-    st.subheader("Tabla P&L Evolution")
     st.dataframe(_estilizar_tabla(df_evo), use_container_width=True)
     st.markdown(
-        "<span style='display:inline-block;width:14px;height:14px;"
-        "background:#DBEAFE;border:2px solid #3B82F6;vertical-align:middle;"
-        "margin-right:4px'></span><b>Real</b> — meses cerrados&nbsp;&nbsp;"
-        "<span style='display:inline-block;width:14px;height:14px;"
-        "background:#FEF3C7;border:2px solid #F59E0B;vertical-align:middle;"
-        "margin-right:4px'></span><b>Run Rate</b> — proyección&nbsp;&nbsp;"
-        "<span style='display:inline-block;width:14px;height:14px;"
-        "background:#EDE9FE;border:2px solid #8B5CF6;vertical-align:middle;"
-        "margin-right:4px'></span><b>Budget</b>",
+        """
+        <div class="rrai-legend">
+            <div class="rrai-legend__item">
+                <span class="rrai-legend__dot"
+                      style="background:#DBEAFE;border:2px solid #3B82F6;"></span>
+                Real — meses cerrados
+            </div>
+            <div class="rrai-legend__item">
+                <span class="rrai-legend__dot"
+                      style="background:#FEF3C7;border:2px solid #F59E0B;"></span>
+                Run Rate — proyección
+            </div>
+            <div class="rrai-legend__item">
+                <span class="rrai-legend__dot"
+                      style="background:#EDE9FE;border:2px solid #8B5CF6;"></span>
+                Budget
+            </div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 
@@ -557,20 +649,33 @@ def render() -> bool:
     _render_action_row(pnl)
 
     if pnl is None:
-        st.caption(
-            "Aún no se ejecutó la proyección — completá la configuración y "
-            "presioná Ejecutar."
+        st.markdown(
+            """
+            <div class="rrai-empty">
+                <div class="rrai-empty__icon">📊</div>
+                <p class="rrai-empty__title">Todavía no hay proyección</p>
+                <p class="rrai-empty__desc">
+                    Completá la configuración y presioná
+                    <strong>Ejecutar proyección</strong> para ver el P&amp;L.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
         return False
 
-    st.subheader("Filtros")
+    _render_avisos_calidad(pnl)
+
+    _render_section("Filtros")
     pnl_filt, _sel = _aplicar_filtros(pnl)
 
+    _render_section("Métricas")
     _render_metric_cards(pnl_filt)
 
-    st.subheader("Gráficos")
+    _render_section("Proyección")
     _grafico_rr_vs_budget(pnl_filt)
 
+    _render_section("P&L Evolution")
     _render_tabla_evolucion(pnl_filt, st.session_state["mes_pivot"])
 
     if st.session_state.get("contable") is not None:
