@@ -3,6 +3,10 @@
 Este archivo le da contexto persistente a Claude Code en cada sesión. Léelo
 antes de empezar a trabajar.
 
+> **Migración FastAPI + React completada el 2026-06-12.**
+> Ver sección 7 para el nuevo flujo de arranque.
+> Documentación detallada en `docs/migracion_react_fastapi.md`.
+
 ---
 
 ## 1. Misión del proyecto
@@ -26,14 +30,22 @@ esta v1 solo se usan 6:
 
 ## 2. Decisiones de diseño (tomadas con el usuario)
 
-### Stack
-- **Streamlit** como framework de UI
-- **pandas + openpyxl** para Excel
-- **pydantic** para validación de esquemas
-- **plotly** para gráficos
-- **xlsxwriter** para escribir Excel de salida
-- **pytest** para tests
-- Versiones sin pinear estricto (compatibilidad con Python 3.14)
+### Stack (v2 — migrado a FastAPI + React el 2026-06-12)
+- **FastAPI + Uvicorn** como backend HTTP (reemplaza Streamlit como servidor)
+- **React 18 + Vite + TypeScript** como frontend
+- **Tailwind CSS v3** para estilos
+- **Framer Motion** para animaciones de pasos y micro-interacciones
+- **Recharts** para gráficos (reemplaza Plotly)
+- **TanStack Query** para estado del servidor en el frontend
+- **Zustand** para estado del wizard (sesión + paso + config)
+- **Axios** como cliente HTTP
+- **pandas + openpyxl** para Excel (sin cambios)
+- **pydantic** para validación de schemas de request/response
+- **xlsxwriter** para escribir Excel de salida (sin cambios)
+- **pytest** para tests (sin cambios)
+- **app.py** (Streamlit) se mantiene y puede correr en paralelo
+
+> **Nota**: `src/`, `config/`, `data/`, `tests/` no fueron modificados.
 
 ### Flujo de datos
 - El **usuario sube en cada ejecución**: Base 2026 y Contable
@@ -294,16 +306,30 @@ pertenece y un `TODO Mxx` con la firma de la función a implementar.
 
 ## 7. Cómo correr la app
 
-```bash
-# 1. Activar venv
-.venv\Scripts\Activate.ps1            # Windows PowerShell
-source .venv/bin/activate             # macOS / Linux
+### v2 — FastAPI + React (stack principal desde 2026-06-12)
 
-# 2. Correr Streamlit
-streamlit run app.py
+```powershell
+# 1. Activar venv
+.venv\Scripts\Activate.ps1
+
+# 2. Backend (Terminal 1)
+python run_api.py
+# → API en  http://localhost:8000
+# → Docs en http://localhost:8000/docs  (Swagger interactivo)
+
+# 3. Frontend (Terminal 2)
+cd frontend
+npm run dev
+# → UI en http://localhost:5173
 ```
 
-Se abre en `http://localhost:8501`.
+### v1 — Streamlit (sigue disponible)
+
+```powershell
+.venv\Scripts\Activate.ps1
+streamlit run app.py
+# → UI en http://localhost:8501
+```
 
 ---
 

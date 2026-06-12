@@ -39,7 +39,17 @@
       "Bash(mkdir -p \"c:\\\\Users\\\\tiago.harari\\\\Desktop\\\\RR AI\\\\.claude\\\\skills\\\\logica-financiera\")",
       "Bash(python -m pytest tests/ -q)",
       "Bash(python -m pytest tests/test_logica.py -q -k \"shape or continuidad or piso or calibracion or flags\")",
-      "Bash(git commit -q -m ' *)"
+      "Bash(git commit -q -m ' *)",
+      "Bash(.venv\\\\Scripts\\\\pip.exe install *)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://localhost:8000/api/status\" -Method GET | ConvertTo-Json -Depth 5)",
+      "Bash(node_modules/.bin/tailwindcss init *)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Start-Process \"http://localhost:5173\")",
+      "PowerShell(Start-Process \"http://localhost:5174\")",
+      "Bash(cat .gitignore)",
+      "Bash(cat frontend/.gitignore)",
+      "Bash(git check-ignore *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\tiago.harari\\Desktop\\RR AI\\.claude\\skills"

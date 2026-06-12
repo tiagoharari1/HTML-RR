@@ -10,5 +10,11 @@ plotly
 # Excel export
 xlsxwriter
 
+# API backend
+fastapi
+uvicorn[standard]
+python-multipart
+pyarrow
+
 # Dev / testing
 pytest
