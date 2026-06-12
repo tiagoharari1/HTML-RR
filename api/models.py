@@ -73,6 +73,10 @@ class Totales(BaseModel):
 class BuildResponse(BaseModel):
     ok: bool
     pnl: list[dict[str, Any]]
+    # Series de comparación: una fila por mes calendario con las métricas P&L.
+    # actuals = datos reales observados; budget = plan. Vacías si no hay datos.
+    actuals: list[dict[str, Any]] = []
+    budget: list[dict[str, Any]] = []
     info_calibracion: list[str]
     warnings_continuidad: list[str]
     totales: Totales
